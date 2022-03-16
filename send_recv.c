@@ -48,3 +48,4 @@ int main(int argc, char* argv[])
             printf("%d %f\n",bytes ,bytes/time);
     }
     Finalize();
+}
