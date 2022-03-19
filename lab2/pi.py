@@ -38,5 +38,5 @@ if rank == 0:
     stop = MPI.Wtime()
     time = stop - start
     
-    output = "{size};{time}".format(size=size, time=time, result=result)
+    output = "{size};{time};{points_total}".format(size=size, time=time, points_total=points_total)
     print output
