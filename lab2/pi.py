@@ -24,7 +24,7 @@ points_inside = 0
 points_per_node = points_total // size
 
 comm.Barrier()
-time = MPI.Wtime()
+start = MPI.Wtime()
 
 for i in xrange(points_per_node):
     point = Point()
@@ -33,8 +33,8 @@ for i in xrange(points_per_node):
         points_inside += 1
     
 total_inside = comm.reduce(points_inside, op=MPI.SUM, root=0)
-
 if rank == 0:
     result = 4 * (total_inside / points_total)
-    print result
-    
+    stop = MPI.Wtime()
+    time = stop - start
+    print result, time
