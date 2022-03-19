@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 from __future__ import division
-# from mpi4py import MPI
+from mpi4py import MPI
 import random
 import sys
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
 points_total = int(sys.argv[1])
 r = 1
@@ -17,13 +21,20 @@ class Point:
 
 
 points_inside = 0
+points_per_node = points_total // size
 
-for i in xrange(points_total):
+comm.Barrier()
+time = MPI.Wtime()
+
+for i in xrange(points_per_node):
     point = Point()
 
     if point.is_inside(r):
         points_inside += 1
     
-result = 4 * (points_inside / points_total)
+total_inside = comm.reduce(points_inside, op=MPI.SUM, root=0)
 
-print result
+if rank == 0:
+    result = 4 * (total_inside / points_total)
+    print result
+    
