@@ -1,7 +1,6 @@
-# 
 rm results.csv
-for i in {1..100}
+for i in {1..2}
 do
     a=$(( 100*i ))
-    mpiexec -machinefile ./1node -np 2 ./send_recv.py $a >> results
+    mpiexec -machinefile ./1node -np 2 ./send_recv.py $a >> results.csv
 done
