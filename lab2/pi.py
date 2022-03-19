@@ -37,4 +37,6 @@ if rank == 0:
     result = 4 * (total_inside / points_total)
     stop = MPI.Wtime()
     time = stop - start
-    print result, time
+    
+    output = "{size};{time};{result}".format(size=size, time=time, result=result)
+    print output
