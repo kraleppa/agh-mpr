@@ -10,7 +10,6 @@ values=4000000,34641016,300000000
 
 module add plgrid/tools/openmpi
 module add plgrid/libs/python-mpi4py/3.0.0-python-2.7
-rm results.csv
 
 for val in ${values//,/ }
 do
@@ -18,7 +17,7 @@ do
     do
         for threads in {1..12}
         do
-            mpiexec -np $threads ./pi.py $val >> results.csv
+            mpiexec -np $threads ./pi.py $val
         done
     done
 done
