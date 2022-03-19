@@ -5,8 +5,8 @@ import sys
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 
-test_count = 10000
-bytes_to_send = int(sys.argv[1])
+test_count = 100000
+bytes_to_send = 1
 message = "A" * bytes_to_send
 
 def ping_pong():
@@ -34,14 +34,14 @@ for i in range(test_count):
    summed_time = summed_time + time
 
 if rank == 0:
-   result = summed_time / test_count
-   speed_in_mega_bits = (bytes_to_send * 8 / result) / 1000000
+   result = summed_time / test_count * 1000 # in ms
+#    speed_in_mega_bits = (bytes_to_send * 8 / result) / 1000000
 
 
    # print "Time per message:", result, "s"
    # print "Message size:", bytes_to_send, "B"
    # print "Speed:", speed_in_mega_bits, "Mb/s" 
 
-   output = "{bytes};{speed}".format(bytes=bytes_to_send, speed=speed_in_mega_bits)
+   output = "{delay} ms".format(delay=result)
 
    print output

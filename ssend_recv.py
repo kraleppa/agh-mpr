@@ -14,11 +14,11 @@ def ping_pong():
    start = MPI.Wtime()
 
    if rank == 0:
-      comm.send(message, dest=1)
+      comm.ssend(message, dest=1)
       comm.recv(source=1)
    elif rank == 1:
       data = comm.recv(source=0)
-      comm.send(data, dest=0)
+      comm.ssend(data, dest=0)
 
    stop = MPI.Wtime()
    
