@@ -8,7 +8,7 @@
 int main(int argc, char* argv[])
 {
     int thread_number = 4;
-    int size = 10000000;
+    int size = 100000000;
     int max = 10;
 
     omp_set_num_threads(thread_number);
