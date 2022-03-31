@@ -6,7 +6,7 @@ all:
 	make exec
 
 compile:
-	$(CC) -fopenmp main.c -o main
+	$(CC) -fopenmp main.c -o main.out
 
 exec:
 	clear
