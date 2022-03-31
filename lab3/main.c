@@ -8,37 +8,30 @@
 int main(int argc, char* argv[])
 {
     int thread_number = 4;
+    int size = 10000000;
+    int max = 10;
+
     omp_set_num_threads(thread_number);
-    int size = 16;
     int *tab = calloc(size, sizeof(int));
 
     double start = omp_get_wtime();
     
     #pragma omp parallel
     {
-        #pragma omp for schedule(static, 1)
+        int seed = time(0) + omp_get_thread_num();
+        #pragma omp for
             for(int i=0 ; i < size ; i++){
-                tab[i] = omp_get_thread_num();
+                tab[i] = rand_r(&seed) % max;
             }
     }
 
     double stop = omp_get_wtime();
 
-    for (int i = 0; i < size; i++)
-    {
-        printf("%d", tab[i]);
-    }
+    // for (int i = 0; i < size; i++)
+    // {
+    //     printf("%d ", tab[i]);
+    // }
 
     printf("\nTime: %f\n", stop - start); 
     return 0;
 }
-
-
-
-    // #pragma omp parallel
-    // {
-    //     #pragma omp for schedule(static)
-    //         for(int i=0 ; i < size ; i++){
-    //             tab[i] = omp_get_thread_num();
-    //         }
-    // }
