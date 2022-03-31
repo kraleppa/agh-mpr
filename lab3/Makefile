@@ -1,4 +1,4 @@
-CC = gcc -Wall
+CC = gcc -Wall -std=c99
 
 all:
 	make clear
