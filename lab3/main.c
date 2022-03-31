@@ -8,19 +8,34 @@ int main(int argc, char* argv[])
  
     int size = 16;
     int *tab = calloc(size, sizeof(int));
-    // Beginning of parallel region
+
+    double start = omp_get_wtime();
+
+    // #pragma omp parallel
+    // {
+    //     for (int i = omp_get_thread_num(); i < size; i=i+4)
+    //     {
+    //         tab[i] = omp_get_thread_num();
+    //     }
+    // }
+
     #pragma omp parallel
     {
-        for (int i = omp_get_thread_num(); i < size; i=i+4)
-        {
-            tab[i] = omp_get_thread_num();
-        }
+        #pragma omp for schedule(static)
+            for(int i=0 ; i < size ; i++){
+                tab[i] = omp_get_thread_num();
+            }
     }
 
-    for (int i = 0; i < size; i++){
+    double stop = omp_get_wtime();
+
+    for (int i = 0; i < size; i++)
+    {
         printf("%d", tab[i]);
     }
-    printf("\n"); 
-    // Ending of parallel region
+
+
+
+    printf("\nTime: %f\n", stop - start); 
     return 0;
 }
