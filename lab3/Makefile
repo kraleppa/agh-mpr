@@ -10,7 +10,7 @@ compile:
 
 exec:
 	clear
-	./main
+	./main.out
 
 clear:
 	rm -f *.o *.out *.a *.so main
