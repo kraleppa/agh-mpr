@@ -27,6 +27,6 @@ int main(int argc, char* argv[])
 
     double stop = omp_get_wtime();
 
-    printf("\nTime: %f\n", stop - start); 
+    printf("%d;%d,%f\n", thread_number, size, stop - start); 
     return 0;
 }
