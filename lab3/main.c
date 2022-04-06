@@ -7,8 +7,8 @@
  
 int main(int argc, char* argv[])
 {
-    int thread_number = 4;
-    int size = 100000000;
+    int thread_number = atoi(argv[1]);
+    int size = atoi(argv[2]);
     int max = 10;
 
     omp_set_num_threads(thread_number);
@@ -26,11 +26,6 @@ int main(int argc, char* argv[])
     }
 
     double stop = omp_get_wtime();
-
-    // for (int i = 0; i < size; i++)
-    // {
-    //     printf("%d ", tab[i]);
-    // }
 
     printf("\nTime: %f\n", stop - start); 
     return 0;
