@@ -1,3 +1,12 @@
 make compile
 clear
-./main.out 1 10000000
+
+values=50000000,150000000,250000000
+
+for val in ${values//,/ }
+do
+    for threads in {1..4}
+    do
+        ./main.out $threads $val
+    done
+done
