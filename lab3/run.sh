@@ -1,5 +1,6 @@
 make compile
 clear
+rm results.csv
 
 values=50000000,150000000,250000000
 

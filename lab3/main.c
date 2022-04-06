@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     #pragma omp parallel
     {
         int seed = time(0) + omp_get_thread_num();
-        #pragma omp for
+        #pragma omp for schedule(static)
             for(int i=0 ; i < size ; i++){
                 tab[i] = rand_r(&seed) % max;
             }
@@ -27,6 +27,6 @@ int main(int argc, char* argv[])
 
     double stop = omp_get_wtime();
 
-    printf("%d;%d,%f\n", thread_number, size, stop - start); 
+    printf("%d;%f;%d\n", thread_number, stop - start, size); 
     return 0;
 }
