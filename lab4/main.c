@@ -12,10 +12,10 @@ int cmpfunc (const void * a, const void * b) {
 int main(int argc, char* argv[])
 {
  
-    int size = 100;
+    int size = 20;
     int *tab = calloc(size, sizeof(int));
-    int threads = 1;
-    int buckets_n = threads*10;
+    int threads = 4;
+    int buckets_n = threads;
     int max = 100;
     omp_set_num_threads(threads);
     srand(time(NULL));
@@ -36,25 +36,35 @@ int main(int argc, char* argv[])
         int seed = time(0) + omp_get_thread_num();
         #pragma omp for
         for(int i=0 ; i < size ; i++){
-            tab[i] = rand_r(&seed) % max;
+            tab[i] = rand_r(&seed) % 4;
         }
     }
 
     int ** buckets = calloc(buckets_n, sizeof(int*));
     for(int i = 0; i<buckets_n; i++){
-        buckets[i] = calloc(size/buckets_n*2, sizeof(int));
+        buckets[i] = calloc(size, sizeof(int));
     }
     int * bucket_tails = calloc(buckets_n, sizeof(int));
 
     int interval = max/buckets_n;
 
-    for(int i = 0; i< size; i++){
-        int target_bucket = tab[i]/interval;
-        int target_index = bucket_tails[target_bucket];
-        bucket_tails[target_bucket]++;
-        buckets[target_bucket][target_index] = tab[i];
+    #pragma omp parallel
+    {
+        int current_thread = omp_get_thread_num();
+        printf("%d\n", current_thread);
+        for(int i = 0; i< size; i++){
+            int target_bucket = tab[i]/interval;
+            int target_index = bucket_tails[target_bucket];
+            if(target_bucket == current_thread){
+                printf("%d, %d, %d, %d\n", current_thread, i, target_bucket, target_index);
+                bucket_tails[target_bucket]++;
+                buckets[target_bucket][target_index] = tab[i];
+            }       
+        }
     }
+    exit(0);
 
+    
     for(int i = 0; i<buckets_n; i++){
         int* current_bucket = buckets[i];
         int current_bucket_size = bucket_tails[i];
