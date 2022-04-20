@@ -61,21 +61,6 @@ int main(int argc, char* argv[])
             omp_unset_lock(&(bucket_locks[target_bucket]));
             // printf("\n end: %d\n", tab[i]);
         }
-
-        // #pragma omp single
-        // {
-        //     for(int i = 1; i< buckets_n; i++){
-        //         bucket_tails_prefix_sum[i] = bucket_tails_prefix_sum[i-1] + bucket_tails[i-1];
-        //     }
-        // }
-
-        // #pragma omp for
-        // for(int current_bucket = 0; current_bucket<buckets_n; current_bucket++){
-        //     int current_element = bucket_tails_prefix_sum[current_bucket];
-        //     for(int i = 0; i<bucket_tails[current_bucket]; i++){
-        //         tab[current_element+i] = buckets[current_bucket][i];
-        //     }
-        // }
     }
 
     //------
