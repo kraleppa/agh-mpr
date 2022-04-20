@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
 
     #pragma omp parallel default(shared)
     {
-        int thread_num = omp_get_thread_num();
         #pragma omp for
         for(int i = 0; i < size; i++){
             // printf("\nstart: %d\n", tab[i]);
