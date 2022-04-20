@@ -12,9 +12,10 @@ int cmpfunc (const void * a, const void * b) {
 int main(int argc, char* argv[])
 {
     int size = 10000000;
-    int threads = 4;
+    int threads = 2;
     int buckets_n = 1000;
     int max = buckets_n * 100;
+
     int interval = max/buckets_n;
     omp_set_num_threads(threads);
     srand(time(NULL));
