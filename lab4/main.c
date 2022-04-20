@@ -11,81 +11,84 @@ int cmpfunc (const void * a, const void * b) {
 
 int main(int argc, char* argv[])
 {
- 
-    int size = 20;
-    int *tab = calloc(size, sizeof(int));
+    int size = 10000000;
     int threads = 4;
-    int buckets_n = threads;
-    int max = 100;
+    int buckets_n = 1000;
+    int max = buckets_n * 100;
+    int interval = max/buckets_n;
     omp_set_num_threads(threads);
     srand(time(NULL));
 
-    double start = omp_get_wtime();
-
-    // #pragma omp parallel
-    // {
-    //     int seed = time(0) + omp_get_thread_num();
-    //     for (int i = omp_get_thread_num(); i < size; i=i+4)
-    //     {
-    //         tab[i] = rand_r(&seed) % 100;
-    //     }
-    // }
-
-    #pragma omp parallel
-    {
-        int seed = time(0) + omp_get_thread_num();
-        #pragma omp for
-        for(int i=0 ; i < size ; i++){
-            tab[i] = rand_r(&seed) % 4;
-        }
-    }
-
+    int *tab = calloc(size, sizeof(int));
     int ** buckets = calloc(buckets_n, sizeof(int*));
     for(int i = 0; i<buckets_n; i++){
         buckets[i] = calloc(size, sizeof(int));
     }
     int * bucket_tails = calloc(buckets_n, sizeof(int));
-
-    int interval = max/buckets_n;
+    int * bucket_tails_prefix_sum = calloc(buckets_n, sizeof(int));
 
     #pragma omp parallel
     {
-        int current_thread = omp_get_thread_num();
-        printf("%d\n", current_thread);
-        for(int i = 0; i< size; i++){
-            int target_bucket = tab[i]/interval;
-            int target_index = bucket_tails[target_bucket];
-            if(target_bucket == current_thread){
-                printf("%d, %d, %d, %d\n", current_thread, i, target_bucket, target_index);
-                bucket_tails[target_bucket]++;
-                buckets[target_bucket][target_index] = tab[i];
-            }       
+        unsigned int seed = time(0) + omp_get_thread_num();
+        #pragma omp for
+        for(int i=0 ; i < size ; i++){
+            tab[i] = rand_r(&seed) % max;
         }
     }
-    exit(0);
 
-    
-    for(int i = 0; i<buckets_n; i++){
-        int* current_bucket = buckets[i];
-        int current_bucket_size = bucket_tails[i];
-        qsort(current_bucket, current_bucket_size, sizeof(int), cmpfunc);
-    }
+    double start = omp_get_wtime();
 
-
+    #pragma omp parallel
     {
-        int current_bucket = 0;
-        int current_element = 0;
-        for(int i = 0; i<size; i++){
-            tab[i] = buckets[current_bucket][current_element++];
-            if(current_element >= bucket_tails[current_bucket]){
-                current_bucket++;
-                current_element = 0;
+        int thread_num = omp_get_thread_num();
+        #pragma omp for
+        for(int current_bucket = 0; current_bucket<buckets_n; current_bucket++){
+            for(int i = 0; i< size; i++){
+                int target_bucket = tab[i]/interval;
+                int target_index = bucket_tails[target_bucket];
+                if(target_bucket == current_bucket){
+                    bucket_tails[target_bucket]++;
+                    buckets[target_bucket][target_index] = tab[i];
+                }       
+            }
+
+            qsort(buckets[current_bucket], bucket_tails[current_bucket], sizeof(int), cmpfunc);
+        }
+
+        #pragma omp single
+        {
+            for(int i = 1; i< buckets_n; i++){
+                bucket_tails_prefix_sum[i] = bucket_tails_prefix_sum[i-1] + bucket_tails[i-1];
+            }
+        }
+
+        #pragma omp for
+        for(int current_bucket = 0; current_bucket<buckets_n; current_bucket++){
+            int current_element = bucket_tails_prefix_sum[current_bucket];
+            for(int i = 0; i<bucket_tails[current_bucket]; i++){
+                tab[current_element+i] = buckets[current_bucket][i];
             }
         }
     }
-
     
     double stop = omp_get_wtime();
+    printf("\nTime: %f\n", stop - start);
+
+    for (int i = 1; i<size; i++){
+        if(tab[i] < tab[i-1])
+            printf("Not sorted!!!\n");
+    }
+
+    exit(0);
+    
+    for(int i = 0; i<buckets_n; i++){
+        printf("%d ", bucket_tails[i]);
+    }
+    printf("\n");
+    for(int i = 0; i<buckets_n; i++){
+        printf("%d ", bucket_tails_prefix_sum[i]);
+    }
+    printf("\nBuckets:\n");
 
     for(int i = 0; i<buckets_n; i++){
         for(int j = 0; j<bucket_tails[i]; j++)
@@ -101,6 +104,5 @@ int main(int argc, char* argv[])
         printf("%d ", tab[i]);
     }
 
-    printf("\nTime: %f\n", stop - start); 
     return 0;
 }
