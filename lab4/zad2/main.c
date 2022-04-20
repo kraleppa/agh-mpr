@@ -11,10 +11,10 @@ int cmpfunc (const void * a, const void * b) {
 
 int main(int argc, char* argv[])
 {
-    int size = 1000000000;
+    int size = 10000000;
     int threads = 4;
-    int buckets_n = 4;
-    int max = 16;
+    int buckets_n = 1000;
+    int max = buckets_n * 100;
 
     int interval = max/buckets_n;
     omp_set_num_threads(threads);
@@ -41,57 +41,49 @@ int main(int argc, char* argv[])
 
     double start = omp_get_wtime();
 
-
-    //------
-
     #pragma omp parallel default(shared)
     {
         #pragma omp for
         for(int i = 0; i < size; i++){
-            // printf("\nstart: %d\n", tab[i]);
-            int target_bucket = tab[i]/interval;
-            // printf("target: %d", target_bucket);
+            int target_bucket = tab[i]/interval < buckets_n ? target_bucket = tab[i]/interval : buckets_n - 1;
             
-            int target_index = bucket_tails[target_bucket];
-            // printf("\nelement: %d, target_bucket: %d, target_index: %d", tab[i], target_bucket, target_index);
             omp_set_lock(&(bucket_locks[target_bucket]));
+            int target_index = bucket_tails[target_bucket];
             bucket_tails[target_bucket]++;
             buckets[target_bucket][target_index] = tab[i];
             omp_unset_lock(&(bucket_locks[target_bucket]));
-            // printf("\n end: %d\n", tab[i]);
+        }
+        #pragma omp barrier
+        #pragma omp for
+        for(int current_bucket = 0; current_bucket<buckets_n; current_bucket++){
+            qsort(buckets[current_bucket], bucket_tails[current_bucket], sizeof(int), cmpfunc);
+        }
+        #pragma omp barrier
+        #pragma omp single
+        {
+            for(int i = 1; i< buckets_n; i++){
+                bucket_tails_prefix_sum[i] = bucket_tails_prefix_sum[i-1] + bucket_tails[i-1];
+            }
+        }
+        #pragma omp for
+        for(int current_bucket = 0; current_bucket<buckets_n; current_bucket++){
+            int current_element = bucket_tails_prefix_sum[current_bucket];
+            for(int i = 0; i<bucket_tails[current_bucket]; i++){
+                tab[current_element+i] = buckets[current_bucket][i];
+            }
         }
     }
 
-    //------
-    
-    double stop = omp_get_wtime();
+   double stop = omp_get_wtime();
     printf("\nTime: %f\n", stop - start);
 
-    // for (int i = 1; i<size; i++){
-    //     if(tab[i] < tab[i-1])
-    //         printf("Not sorted!!!\n");
-    // }
-
-    // for (int i = 0; i < size; i++)
-    // {
-    //     printf("%d ", tab[i]);
-    // }
-
-    exit(0);
-
-    printf("\n");
-    
-    for(int i = 0; i<buckets_n; i++){
-        for(int j = 0; j<bucket_tails[i]; j++)
-        {
-            printf("%d ", buckets[i][j]);
-        }
-        printf("\n");
-        
+    for (int i = 1; i<size; i++){
+        if(tab[i] < tab[i-1])
+            printf("Not sorted!!!\n");
     }
 
-
-
+    exit(0);
+    
     for(int i = 0; i<buckets_n; i++){
         printf("%d ", bucket_tails[i]);
     }
@@ -101,7 +93,14 @@ int main(int argc, char* argv[])
     }
     printf("\nBuckets:\n");
 
-
+    for(int i = 0; i<buckets_n; i++){
+        for(int j = 0; j<bucket_tails[i]; j++)
+        {
+            printf("%d ", buckets[i][j]);
+        }
+        printf("\n");
+        
+    }
 
     for (int i = 0; i < size; i++)
     {
