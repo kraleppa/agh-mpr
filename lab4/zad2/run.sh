@@ -6,7 +6,10 @@
 #SBATCH --account=plgmpr22
 make clear
 make compile
+rm results.csv
+printf "threads;fill_time;split_time;sort_time;merge_time;total_time\n" >> results.csv
 for threads in {1..8}
 do
-    ./main.out $threads
+    #./main.out threads_n table_size elements_per_bucket
+    ./main.out $threads 100000000 20 >> results.csv
 done
