@@ -11,7 +11,7 @@ int cmpfunc (const void * a, const void * b) {
 
 int main(int argc, char* argv[])
 {
-    int size = 5000000;
+    int size = 200000000;
     int threads = atoi(argv[1]);
     int elements_per_bucket = 20;
 
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     int ** buckets = calloc(buckets_n, sizeof(int*));
     omp_lock_t *bucket_locks = calloc(buckets_n, sizeof(omp_lock_t));
     for(int i = 0; i<buckets_n; i++){
-        buckets[i] = calloc(size, sizeof(int));
+        buckets[i] = calloc(elements_per_bucket * 3, sizeof(int));
         omp_init_lock(&(bucket_locks[i]));
     }
     int * bucket_tails = calloc(buckets_n, sizeof(int));

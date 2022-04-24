@@ -6,7 +6,7 @@
 #SBATCH --account=plgmpr22
 make clear
 make compile
-for threads in {1..12}
+for threads in {1..8}
 do
     ./main.out $threads
 done
