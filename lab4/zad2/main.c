@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
 
     double total_time = total_end - total_start;
 
-    printf("%d;%f;%f;%f;%f;%f\n", threads, fill_time, split_time, sort_time, merge_time, total_time);
+    printf("%d;%d;%d,%f;%f;%f;%f;%f\n", threads, size, elements_per_bucket, fill_time, split_time, sort_time, merge_time, total_time);
 
     for (int i = 1; i<size; i++){
         if(tab[i] < tab[i-1])
