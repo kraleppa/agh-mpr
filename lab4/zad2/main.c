@@ -11,8 +11,8 @@ int cmpfunc (const void * a, const void * b) {
 
 int main(int argc, char* argv[])
 {
-    int size = 10000000;
-    int threads = 4;
+    int size = 5000000;
+    int threads = atoi(argv[1]);
     int elements_per_bucket = 20;
 
     int buckets_n = size/elements_per_bucket;
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     }
 
    double stop = omp_get_wtime();
-    printf("\nTime: %f\n", stop - start);
+    printf("\n%d,%f", threads, stop - start);
 
     exit(0);
 
