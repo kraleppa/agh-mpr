@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     int buckets_n = atoi(argv[3]);
 
     int elements_per_bucket = size/buckets_n;
-    int max = buckets_n * 100;
+    int max = size * 2;
     int interval = max/buckets_n;
 
     omp_set_num_threads(threads);
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 
     double total_time = total_end - total_start;
 
-    printf("%d;%d;%d,%f;%f;%f;%f;%f\n", threads, size, buckets_n, fill_time, split_time, sort_time, merge_time, total_time);
+    printf("%d;%d;%d;%f;%f;%f;%f;%f\n", threads, size, buckets_n, fill_time, split_time, sort_time, merge_time, total_time);
 
     for (int i = 1; i<size; i++){
         if(tab[i] < tab[i-1])
