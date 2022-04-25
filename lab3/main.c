@@ -28,5 +28,8 @@ int main(int argc, char* argv[])
     double stop = omp_get_wtime();
 
     printf("%d;%f;%d\n", thread_number, stop - start, size); 
+    for (int i = 0; i < size; i++){
+        printf("%d\n", tab[i]);
+    }
     return 0;
 }
