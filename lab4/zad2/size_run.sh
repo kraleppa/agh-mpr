@@ -9,13 +9,24 @@ make compile
 rm results.csv
 printf "threads;size;buckets;fill_time;split_time;sort_time;merge_time;total_time\n" >> results.csv
 
-for val in {1..4}
+# for val in {1..4}
+# do
+#     for i in {5..7}
+#     do
+#         buckets=$(( 10 ** $i ))
+#         # ./main.out threads_n table_size buckets
+#         ./main.out 1 100000000 $buckets >> results.csv
+#     done
+# done
+
+for val in {1}
 do
-    for i in {5..7}
+    for i in {6..10}
     do
-        buckets=$(( 10 ** $i ))
+        buckets=$(( 1000000 * $i ))
         # ./main.out threads_n table_size buckets
         ./main.out 1 100000000 $buckets >> results.csv
     done
 done
+
 

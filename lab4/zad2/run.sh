@@ -8,8 +8,12 @@ make clear
 make compile
 rm results.csv
 printf "threads;size;buckets;fill_time;split_time;sort_time;merge_time;total_time\n" >> results.csv
-for threads in {1..8}
+
+for threads in {1..10}
 do
-    #./main.out threads_n table_size elements_per_bucket
-    ./main.out $threads 100000000 5000000 >> results.csv
+    for threads in {1..8}
+    do
+        #./main.out threads_n table_size buckets
+        ./main.out $threads 100000000 10000000 >> results.csv
+    done
 done
