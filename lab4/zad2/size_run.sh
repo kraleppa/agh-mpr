@@ -7,17 +7,15 @@
 make clear
 make compile
 rm results.csv
-printf "threads;size;elements_per_bucket;fill_time;split_time;sort_time;merge_time;total_time\n" >> results.csv
+printf "threads;size;buckets;fill_time;split_time;sort_time;merge_time;total_time\n" >> results.csv
 
-values=50000,10000000,50000000
-
-for val in ${values//,/ }
+for val in {1..10}
 do
-    for i in {1..500}
+    for i in {3..7}
     do
-        elements_per_bucket=$(( 100*i ))
-        # ./main.out threads_n table_size elements_per_bucket
-        ./main.out 1 $val $elements_per_bucket >> results.csv
+        buckets=$(( 10 ** $i ))
+        # ./main.out threads_n table_size buckets
+        ./main.out 1 100000000 $buckets >> results.csv
     done
 done
 
