@@ -6,26 +6,10 @@ else
     gzip -d gutenberg-500M.txt.gz 
 fi
 
-echo "Create 1GB data set"
-rm -rf 1gb-set
-mkdir 1gb-set
-for i in {1..2}
-do
-    cp ./gutenberg-500M.txt ./1gb-set/$i.txt
-done
+times=$(($1 * 2))
+hdfs dfs -rm -r words
+hdfs dfs -mkdir words
 
-echo "Create 5GB data set"
-rm -rf 5gb-set
-mkdir 5gb-set
-for i in {1..10}
-do
-    cp ./gutenberg-500M.txt ./5gb-set/$i.txt
-done
-
-echo "Create 10GB data set"
-rm -rf 10gb-set
-mkdir 10gb-set
-for i in {1..20}
-do
-    cp ./gutenberg-500M.txt ./10gb-set/$i.txt
+for ((i=0; i<$times; i++)); do
+    hadoop fs -put -f ./gutenberg-500M.txt ./words/data$i.txt
 done
