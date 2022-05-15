@@ -7,6 +7,6 @@ do
     do
         echo "size $size iteration $i"
         ts=$(date +%s%N) ; $CMD ; tt=$((($(date +%s%N) - $ts)/1000000)) ; echo "$size;$tt" >> res.txt
+        hdfs dfs -rm -r words-output
     done;
-    rm data.txt
 done;
