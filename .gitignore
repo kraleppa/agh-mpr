@@ -1,2 +1,7 @@
 *.csv
 *.out
+.gz
+1gb-set
+5gb-set
+10gb-set
+gutenberg-500M.txt
