@@ -1,4 +1,3 @@
-rm res.txt
 for size in 1 5 10
 do 
     ./get_data_serial.sh $size
